@@ -1,289 +1,249 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AI Pet Companion</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+      :root {
+        --background: oklch(0.9529 0.0146 102.4597);
+        --foreground: oklch(0.4063 0.0255 40.3627);
+        --primary: oklch(0.6083 0.0623 44.3588);
+        --primary-foreground: oklch(1 0 0);
+        --card: oklch(0.9529 0.0146 102.4597);
+        --muted: oklch(0.8502 0.0389 49.0874);
+        --border: oklch(0.7473 0.0387 80.5476);
+        --accent: oklch(0.8502 0.0389 49.0874);
+      }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
+      .dark {
+        --background: oklch(0.2721 0.0141 48.1783);
+        --foreground: oklch(0.9529 0.0146 102.4597);
+        --primary: oklch(0.7272 0.0539 52.332);
+        --primary-foreground: oklch(0.2721 0.0141 48.1783);
+        --card: oklch(0.3291 0.0156 50.8936);
+        --muted: oklch(0.4063 0.0255 40.3627);
+        --border: oklch(0.4063 0.0255 40.3627);
+        --accent: oklch(0.7473 0.0387 80.5476);
+      }
 
-        .container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 500px;
-            overflow: hidden;
-        }
-
-        .header {
-            background: linear-gradient(135deg, #ff6b6b, #feca57);
-            padding: 30px;
-            text-align: center;
-            color: white;
-        }
-
-        .header h1 {
-            font-size: 2em;
-            margin-bottom: 10px;
-        }
-
-        .header p {
-            opacity: 0.9;
-            font-size: 1.1em;
-        }
-
-        .chat-area {
-            height: 400px;
-            overflow-y: auto;
-            padding: 20px;
-            background: #f8f9fa;
-        }
-
-        .message {
-            margin-bottom: 15px;
-            padding: 12px 16px;
-            border-radius: 18px;
-            max-width: 80%;
-            word-wrap: break-word;
-        }
-
-        .user-message {
-            background: #007bff;
-            color: white;
-            margin-left: auto;
-            text-align: right;
-        }
-
-        .pet-message {
-            background: #e9ecef;
-            color: #495057;
-        }
-
-        .input-area {
-            padding: 20px;
-            border-top: 1px solid #e9ecef;
-        }
-
-        .input-container {
-            display: flex;
-            gap: 10px;
-        }
-
-        #messageInput {
-            flex: 1;
-            padding: 12px 16px;
-            border: 2px solid #e9ecef;
-            border-radius: 25px;
-            outline: none;
-            font-size: 16px;
-            transition: border-color 0.3s;
-        }
-
-        #messageInput:focus {
-            border-color: #007bff;
-        }
-
-        #sendButton {
-            background: linear-gradient(135deg, #ff6b6b, #feca57);
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: transform 0.2s;
-        }
-
-        #sendButton:hover:not(:disabled) {
-            transform: translateY(-2px);
-        }
-
-        #sendButton:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .loading {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #6c757d;
-            font-style: italic;
-        }
-
-        .loading-dots {
-            display: inline-flex;
-            gap: 2px;
-        }
-
-        .loading-dots span {
-            width: 6px;
-            height: 6px;
-            background: #6c757d;
-            border-radius: 50%;
-            animation: loading 1.4s ease-in-out infinite both;
-        }
-
-        .loading-dots span:nth-child(1) { animation-delay: -0.32s; }
-        .loading-dots span:nth-child(2) { animation-delay: -0.16s; }
-
-        @keyframes loading {
-            0%, 80%, 100% { transform: scale(0); }
-            40% { transform: scale(1); }
-        }
-
-        .welcome-message {
-            text-align: center;
-            color: #6c757d;
-            padding: 40px 20px;
-            font-style: italic;
-        }
+      @theme inline {
+        --color-background: var(--background);
+        --color-foreground: var(--foreground);
+        --color-primary: var(--primary);
+        --color-primary-foreground: var(--primary-foreground);
+        --color-card: var(--card);
+        --color-muted: var(--muted);
+        --color-border: var(--border);
+        --color-accent: var(--accent);
+      }
     </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>🐾 AI Pet Companion</h1>
-            <p>Chat with your magical anime pet friend!</p>
+    <style>
+      .loading-dots span {
+        width: 6px;
+        height: 6px;
+        background: currentColor;
+        border-radius: 50%;
+        animation: loading 1.4s ease-in-out infinite both;
+        display: inline-block;
+      }
+
+      .loading-dots span:nth-child(1) {
+        animation-delay: -0.32s;
+      }
+      .loading-dots span:nth-child(2) {
+        animation-delay: -0.16s;
+      }
+      .loading-dots span:nth-child(3) {
+        animation-delay: 0s;
+      }
+
+      @keyframes loading {
+        0%,
+        80%,
+        100% {
+          transform: scale(0);
+        }
+        40% {
+          transform: scale(1);
+        }
+      }
+    </style>
+  </head>
+  <body
+    class="min-h-screen flex items-center justify-center p-5"
+    style="background-color: var(--background); color: var(--foreground)"
+  >
+    <div
+      class="w-full max-w-md overflow-hidden rounded-3xl shadow-2xl"
+      style="background-color: var(--card)"
+    >
+      <div
+        class="p-8 text-center text-white"
+        style="background-color: var(--primary)"
+      >
+        <h1 class="text-3xl font-bold mb-2">🐾 AI Pet Companion</h1>
+        <p class="opacity-90 text-lg">
+          Chat with your magical anime pet friend!
+        </p>
+      </div>
+
+      <div
+        class="h-96 overflow-y-auto p-5"
+        id="chatArea"
+        style="background-color: var(--muted)"
+      >
+        <div class="text-center py-10 px-5 italic opacity-75">
+          Start a conversation with your pet companion!
+          <br />Try saying hello or ask your pet their name.
         </div>
-        
-        <div class="chat-area" id="chatArea">
-            <div class="welcome-message">
-                Start a conversation with your pet companion! 
-                <br>Try saying hello or ask your pet their name.
-            </div>
+      </div>
+
+      <div class="p-5 border-t" style="border-color: var(--border)">
+        <div class="flex gap-3">
+          <input
+            type="text"
+            id="messageInput"
+            placeholder="Type your message..."
+            autocomplete="off"
+            class="flex-1 px-4 py-3 rounded-full text-base outline-none transition-colors duration-300 focus:ring-2"
+            style="
+              border: 2px solid var(--border);
+              background-color: var(--card);
+              color: var(--foreground);
+            "
+          />
+          <button
+            id="sendButton"
+            class="px-5 py-3 rounded-full font-bold transition-transform duration-200 hover:-translate-y-0.5 disabled:opacity-60 disabled:cursor-not-allowed"
+            style="
+              background-color: var(--primary);
+              color: var(--primary-foreground);
+            "
+          >
+            Send
+          </button>
         </div>
-        
-        <div class="input-area">
-            <div class="input-container">
-                <input 
-                    type="text" 
-                    id="messageInput" 
-                    placeholder="Type your message..." 
-                    autocomplete="off"
-                >
-                <button id="sendButton">Send</button>
-            </div>
-        </div>
+      </div>
     </div>
 
     <script>
-        const chatArea = document.getElementById('chatArea');
-        const messageInput = document.getElementById('messageInput');
-        const sendButton = document.getElementById('sendButton');
-        
-        let isLoading = false;
+      const chatArea = document.getElementById("chatArea");
+      const messageInput = document.getElementById("messageInput");
+      const sendButton = document.getElementById("sendButton");
 
-        function addMessage(content, isUser = false) {
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${isUser ? 'user-message' : 'pet-message'}`;
-            messageDiv.textContent = content;
-            
-            // Remove welcome message if it exists
-            const welcomeMsg = chatArea.querySelector('.welcome-message');
-            if (welcomeMsg) {
-                welcomeMsg.remove();
-            }
-            
-            chatArea.appendChild(messageDiv);
-            chatArea.scrollTop = chatArea.scrollHeight;
+      let isLoading = false;
+
+      function addMessage(content, isUser = false) {
+        const messageDiv = document.createElement("div");
+        if (isUser) {
+          messageDiv.className =
+            "mb-4 p-3 rounded-2xl max-w-4/5 ml-auto text-right break-words";
+          messageDiv.style.backgroundColor = "var(--primary)";
+          messageDiv.style.color = "var(--primary-foreground)";
+        } else {
+          messageDiv.className = "mb-4 p-3 rounded-2xl max-w-4/5 break-words";
+          messageDiv.style.backgroundColor = "var(--accent)";
+          messageDiv.style.color = "var(--foreground)";
+        }
+        messageDiv.textContent = content;
+
+        // Remove welcome message if it exists
+        const welcomeMsg = chatArea.querySelector(".text-center");
+        if (welcomeMsg) {
+          welcomeMsg.remove();
         }
 
-        function showLoading() {
-            const loadingDiv = document.createElement('div');
-            loadingDiv.className = 'message pet-message loading';
-            loadingDiv.innerHTML = `
+        chatArea.appendChild(messageDiv);
+        chatArea.scrollTop = chatArea.scrollHeight;
+      }
+
+      function showLoading() {
+        const loadingDiv = document.createElement("div");
+        loadingDiv.className =
+          "mb-4 p-3 rounded-2xl max-w-4/5 break-words flex items-center gap-2 italic opacity-75";
+        loadingDiv.style.backgroundColor = "var(--accent)";
+        loadingDiv.style.color = "var(--foreground)";
+        loadingDiv.innerHTML = `
                 Your pet is thinking
-                <div class="loading-dots">
+                <div class="loading-dots inline-flex gap-1">
                     <span></span>
                     <span></span>
                     <span></span>
                 </div>
             `;
-            loadingDiv.id = 'loading-message';
-            
-            chatArea.appendChild(loadingDiv);
-            chatArea.scrollTop = chatArea.scrollHeight;
+        loadingDiv.id = "loading-message";
+
+        chatArea.appendChild(loadingDiv);
+        chatArea.scrollTop = chatArea.scrollHeight;
+      }
+
+      function hideLoading() {
+        const loadingMsg = document.getElementById("loading-message");
+        if (loadingMsg) {
+          loadingMsg.remove();
         }
+      }
 
-        function hideLoading() {
-            const loadingMsg = document.getElementById('loading-message');
-            if (loadingMsg) {
-                loadingMsg.remove();
-            }
+      async function sendMessage() {
+        const message = messageInput.value.trim();
+        if (!message || isLoading) return;
+
+        isLoading = true;
+        sendButton.disabled = true;
+        messageInput.disabled = true;
+
+        // Add user message
+        addMessage(message, true);
+        messageInput.value = "";
+
+        // Show loading
+        showLoading();
+
+        try {
+          const response = await fetch("/chat", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ userMsg: message }),
+          });
+
+          if (!response.ok) {
+            throw new Error(`Server error: ${response.status}`);
+          }
+
+          const data = await response.json();
+
+          hideLoading();
+          addMessage(data.message);
+        } catch (error) {
+          hideLoading();
+          addMessage(
+            `Sorry, I couldn't connect right now. ${error.message}`,
+            false
+          );
+          console.error("Error:", error);
+        } finally {
+          isLoading = false;
+          sendButton.disabled = false;
+          messageInput.disabled = false;
+          messageInput.focus();
         }
+      }
 
-        async function sendMessage() {
-            const message = messageInput.value.trim();
-            if (!message || isLoading) return;
+      // Event listeners
+      sendButton.addEventListener("click", sendMessage);
 
-            isLoading = true;
-            sendButton.disabled = true;
-            messageInput.disabled = true;
-
-            // Add user message
-            addMessage(message, true);
-            messageInput.value = '';
-
-            // Show loading
-            showLoading();
-
-            try {
-                const response = await fetch('/chat', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ userMsg: message })
-                });
-
-                if (!response.ok) {
-                    throw new Error(`Server error: ${response.status}`);
-                }
-
-                const data = await response.json();
-                
-                hideLoading();
-                addMessage(data.message);
-
-            } catch (error) {
-                hideLoading();
-                addMessage(`Sorry, I couldn't connect right now. ${error.message}`, false);
-                console.error('Error:', error);
-            } finally {
-                isLoading = false;
-                sendButton.disabled = false;
-                messageInput.disabled = false;
-                messageInput.focus();
-            }
+      messageInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") {
+          sendMessage();
         }
+      });
 
-        // Event listeners
-        sendButton.addEventListener('click', sendMessage);
-        
-        messageInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                sendMessage();
-            }
-        });
-
-        // Focus input on load
-        messageInput.focus();
+      // Focus input on load
+      messageInput.focus();
     </script>
-</body>
+  </body>
 </html>
